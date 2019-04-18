@@ -20,7 +20,11 @@ public interface InspectInfoRepository {
             @Result(property = "day", column = "Day"),
             @Result(property = "hour", column = "Hour"),
             @Result(property = "minute", column = "Minute"),
-            @Result(property = "second", column = "Second"),
+            @Result(property = "second", column = "Second")
     })
     InspectInfo getLastRecord();
+
+    @Select("SELECT CASE WHEN EXISTS(SELECT * FROM InspectInfo WHERE userInfo = #{userInfo} and Day = #{day}) THEN 1 ELSE 0 END EXISTENCE")
+
+    Integer checkRepeat(String userInfo,Integer day);
 }

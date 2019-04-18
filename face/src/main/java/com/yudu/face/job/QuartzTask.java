@@ -83,31 +83,34 @@ public class QuartzTask {
                 JSONArray arr=resultJson.getJSONArray("data");
                 for(int i=0;i<arr.size();i++){
                     InspectInfo inspectInfo = new InspectInfo();
-                    String times=arr.getJSONObject(i).getString("recordtime");
-                    String userInfo=arr.getJSONObject(i).getString("userno");
-                    String userName=arr.getJSONObject(i).getString("name");
+                    String recordtime=arr.getJSONObject(i).getString("recordtime");
+                    String userno=arr.getJSONObject(i).getString("userno");
+                    String name=arr.getJSONObject(i).getString("name");
                     int result=arr.getJSONObject(i).getInteger("result");
+                    Date sortTime = sdf.parse(recordtime);
+                    cal.setTime(sortTime);
                     if(result ==1){
-                        if("曾衤".equals(userName))
-                            userName = "曾祎";
-                        if("殷坤".equals(userName))
-                            userName = "殷堃";
-                        inspectInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                        inspectInfo.setUserName(userName);
-                        inspectInfo.setMip((new StringBuilder("在")).append(ip).append("中的用户名为:*").append(userName).append("*").toString());
-                        inspectInfo.setUserInfo(userInfo);
-                        inspectInfo.setTimes(times);
-                        Date sortTime = sdf.parse(times);
-                        cal.setTime(sortTime);
-                        inspectInfo.setSortTime(sortTime);
-                        inspectInfo.setCountTime(new Date());//暂时这么做
-                        inspectInfo.setYear(cal.get(Calendar.YEAR));
-                        inspectInfo.setMonth(cal.get(Calendar.MONTH)+1);
-                        inspectInfo.setDay(cal.get(Calendar.DATE));
-                        inspectInfo.setHour(cal.get(Calendar.HOUR_OF_DAY));
-                        inspectInfo.setMinute(cal.get(Calendar.MINUTE));
-                        inspectInfo.setSecond(cal.get(Calendar.SECOND));
-                        inspectInfoRepository.insert(inspectInfo);
+                        //验证数据是否重复
+                        if(inspectInfoRepository.checkRepeat(userno,cal.get(Calendar.DATE)) ==1) {
+                            if ("曾衤".equals(name))
+                                name = "曾祎";
+                            if ("殷坤".equals(name))
+                                name = "殷堃";
+                            inspectInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                            inspectInfo.setUserName(name);
+                            inspectInfo.setMip((new StringBuilder("在")).append(ip).append("中的用户名为:*").append(name).append("*").toString());
+                            inspectInfo.setUserInfo(userno);
+                            inspectInfo.setTimes(recordtime);
+                            inspectInfo.setSortTime(sortTime);
+                            inspectInfo.setCountTime(new Date());
+                            inspectInfo.setYear(cal.get(Calendar.YEAR));
+                            inspectInfo.setMonth(cal.get(Calendar.MONTH) + 1);
+                            inspectInfo.setDay(cal.get(Calendar.DATE));
+                            inspectInfo.setHour(cal.get(Calendar.HOUR_OF_DAY));
+                            inspectInfo.setMinute(cal.get(Calendar.MINUTE));
+                            inspectInfo.setSecond(cal.get(Calendar.SECOND));
+                            inspectInfoRepository.insert(inspectInfo);
+                        }
                     }
                 }
                 client.close();

@@ -45,4 +45,9 @@ public class TestDemo {
     public void testSelect(){
         InspectInfo isp = inspectInfoRepository.getLastRecord();
     }
+
+    @Test
+    public void testCheckRepeat(){
+        Integer res =  inspectInfoRepository.checkRepeat("4028828b581c1dc901581ddd9b610240",15);
+    }
 }
