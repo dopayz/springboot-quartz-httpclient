@@ -9,7 +9,7 @@ public interface InspectInfoRepository {
             ",#{minute},#{second},#{sortTime},#{mip},#{countTime})")
     void insert(InspectInfo inspectInfo);
 
-    @Select("SELECT top 1 * FROM InspectInfo order by Times desc")
+    @Select("SELECT top 1 * FROM InspectInfo order by sortTime desc")
     @Results({
             @Result(property = "enrollNumber",  column = "EnrollNumber"),
             @Result(property = "verifyMode", column = "VerifyMode"),
@@ -20,11 +20,14 @@ public interface InspectInfoRepository {
             @Result(property = "day", column = "Day"),
             @Result(property = "hour", column = "Hour"),
             @Result(property = "minute", column = "Minute"),
-            @Result(property = "second", column = "Second")
+            @Result(property = "second", column = "Second"),
+            @Result(property = "sortTime", column = "sortTime"),
+            @Result(property = "mip", column = "mip"),
+            @Result(property = "countTime", column = "countTime")
     })
     InspectInfo getLastRecord();
 
-    @Select("SELECT CASE WHEN EXISTS(SELECT * FROM InspectInfo WHERE userInfo = #{userInfo} and Day = #{day}) THEN 1 ELSE 0 END EXISTENCE")
+    @Select("SELECT CASE WHEN EXISTS(SELECT * FROM InspectInfo WHERE times = #{times}) THEN 1 ELSE 0 END EXISTENCE")
 
-    Integer checkRepeat(String userInfo,Integer day);
+    Integer checkRepeat(String times);
 }
